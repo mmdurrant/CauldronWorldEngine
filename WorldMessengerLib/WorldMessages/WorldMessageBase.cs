@@ -54,7 +54,11 @@ namespace WorldMessengerLib.WorldMessages
         AdminLoginAttemptResult,
         AdminLogoutRequest,
         CreateAdminAccountRequest,
-        CreateAdminAccountResult
+        CreateAdminAccountResult,
+        AdminAccountsRequest,
+        AdminAccountsReply,
+        PlayerAccountsRequest,
+        PlayerAccountsReply
     }
 
     [Serializable]
@@ -194,6 +198,7 @@ namespace WorldMessengerLib.WorldMessages
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
+        public bool IsManager { get; set; }
     }
 
     [Serializable]

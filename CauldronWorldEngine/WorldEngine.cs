@@ -47,13 +47,9 @@ namespace CauldronWorldEngine
         {
             ExceptionSender = new Sender(StaticChannelNames.Exception);
             ExceptionSender.Connect();
-
-
-            
         }
         public void Start()
         {
-            
             SubscribeToExchanges();
             Console.WriteLine("Starting Server");
             while (true)
@@ -246,6 +242,7 @@ namespace CauldronWorldEngine
                             switch (msg.MessageType)
                             {
                                 case WorldMessageType.CreateAdminAccountRequest:
+                                    ReadCreateAdminAccountRequest(msg.ReadMessage<CreateAdminAccountRequest>());
                                     break;
                                 case WorldMessageType.CreateAccount:
                                     break;
@@ -301,7 +298,7 @@ namespace CauldronWorldEngine
             if (client != null)
             {
                 var result = AccountManager.CreateAccount(message.Username, message.Password, message.Email);
-                var resultMessage = new CreateAccountResultMessage() { PlayerId = message.PlayerId, ConnectionId = client.ConnectionId};
+                var resultMessage = new CreateAccountResultMessage { PlayerId = message.PlayerId, ConnectionId = client.ConnectionId};
                 if (result.Success)
                 {
                     resultMessage.Success = result.Result;
@@ -312,7 +309,15 @@ namespace CauldronWorldEngine
                     resultMessage.Success = false;
                     resultMessage.Message = "Error during Account creation. Please try again later.";
                 }
-                UnitySender.SendMessage(resultMessage);
+
+                if (message.IsManager)
+                {
+                    ManagerSender.SendMessage(resultMessage);
+                }
+                else
+                {
+                    UnitySender.SendMessage(resultMessage);
+                }
             }
         }
 
@@ -461,6 +466,15 @@ namespace CauldronWorldEngine
                     });
                 }
             }
+        }
+
+        private void ReadCreateAdminAccountRequest(CreateAdminAccountRequest message)
+        {
+            var result = AdminAccountManager.CreateAdminAccount(message.Username, message.Password);
+            ManagerSender.SendMessage(
+                result.Success
+                    ? new CreateAdminAccountResult {Success = true, Message = "Account created succesfully!"}
+                    : new CreateAdminAccountResult {Success = false, Message = "Unable to create account"});
         }
 
     }

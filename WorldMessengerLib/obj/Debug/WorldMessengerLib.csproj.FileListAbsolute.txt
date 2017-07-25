@@ -7,4 +7,3 @@ C:\Users\TrogdorReborn\Documents\Visual Studio 2017\Projects\CauldronWorldEngine
 C:\Users\TrogdorReborn\Documents\Visual Studio 2017\Projects\CauldronWorldEngine\WorldMessengerLib\bin\Debug\RabbitMQ.Client.xml
 C:\Users\TrogdorReborn\Documents\Visual Studio 2017\Projects\CauldronWorldEngine\WorldMessengerLib\obj\Debug\WorldMessengerLib.dll
 C:\Users\TrogdorReborn\Documents\Visual Studio 2017\Projects\CauldronWorldEngine\WorldMessengerLib\obj\Debug\WorldMessengerLib.pdb
-C:\Users\TrogdorReborn\Documents\Visual Studio 2017\Projects\CauldronWorldEngine\WorldMessengerLib\obj\Debug\WorldMessengerLib.csprojResolveAssemblyReference.cache
