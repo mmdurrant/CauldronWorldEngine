@@ -245,10 +245,18 @@ namespace CauldronWorldEngine
                                     ReadCreateAdminAccountRequest(msg.ReadMessage<CreateAdminAccountRequest>());
                                     break;
                                 case WorldMessageType.CreateAccount:
+                                    ReadCreateAccount(msg.ReadMessage<CreateAccountMessage>());
+                                    break;
+                                case WorldMessageType.PlayerAccountsRequest:
+                                    ReadPlayerAccountsRequest(msg.ReadMessage<PlayerAccountsRequest>());
+                                    break;
+                                case WorldMessageType.AdminAccountsRequest:
+                                    ReadAdminAccountsRequest(msg.ReadMessage<AdminAccountsRequest>());
                                     break;
                             }
                         }
                     });
+                    thread.Start();
                 }
             }
         }
@@ -475,6 +483,22 @@ namespace CauldronWorldEngine
                 result.Success
                     ? new CreateAdminAccountResult {Success = true, Message = "Account created succesfully!"}
                     : new CreateAdminAccountResult {Success = false, Message = "Unable to create account"});
+        }
+
+        private void ReadPlayerAccountsRequest(PlayerAccountsRequest message)
+        {
+            var result = AccountManager.ViewAccounts();
+            ManagerSender.SendMessage(result.Success
+                ? new PlayerAccountsReply {PlayerAccounts = result.Result, Success = true}
+                : new PlayerAccountsReply {Success = false, Message = $"{result.Message}: {result.Exception}"});
+        }
+
+        private void ReadAdminAccountsRequest(AdminAccountsRequest message)
+        {
+            var result = AdminAccountManager.ViewAccounts();
+            ManagerSender.SendMessage(result.Success
+                ? new AdminAccountsReply {Success = true, AdminAccounts = result.Result}
+                : new AdminAccountsReply {Success = false, Message = $"{result.Message}: {result.Exception}"});
         }
 
     }

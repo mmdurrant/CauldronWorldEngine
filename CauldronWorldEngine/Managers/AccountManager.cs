@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CauldronWorldEngine.Database;
+using WorldMessengerLib;
 using WorldMessengerLib.WorldMessages;
 
 namespace CauldronWorldEngine.Managers
@@ -118,9 +119,17 @@ namespace CauldronWorldEngine.Managers
             };
         }
 
-        public DbResponse<List<string>> ViewAccounts()
+        public CommandResponse<List<AccountData>> ViewAccounts()
         {
-            return new DbResponse<List<string>>();
+            var result = _database.GetPlayerAccounts();
+            return result.Success
+                ? new CommandResponse<List<AccountData>> {Success = true, Result = result.Result}
+                : new CommandResponse<List<AccountData>>
+                {
+                    Success = false,
+                    Exception = result.Exception,
+                    Message = "Error during GetPlayerAccounts"
+                };
         }
     }
 }

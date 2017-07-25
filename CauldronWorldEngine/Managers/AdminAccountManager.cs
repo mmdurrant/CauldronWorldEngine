@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CauldronWorldEngine.Database;
+using WorldMessengerLib;
 using WorldMessengerLib.WorldMessages;
 
 namespace CauldronWorldEngine.Managers
@@ -100,6 +101,19 @@ namespace CauldronWorldEngine.Managers
             var admins = AdminAccounts.Values.ToList();
             var client = admins.Find(a => a.ConnectionId == connectionId);
             return client;
+        }
+
+        public CommandResponse<List<AccountData>> ViewAccounts()
+        {
+            var result = Database.GetAdminAccounts();
+            return result.Success
+                ? new CommandResponse<List<AccountData>> {Success = true, Result = result.Result}
+                : new CommandResponse<List<AccountData>>
+                {
+                    Success = false,
+                    Exception = result.Exception,
+                    Message = "Error during GetAdminAccounts"
+                };
         }
         
     }

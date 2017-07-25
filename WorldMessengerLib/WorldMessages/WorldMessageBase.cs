@@ -394,6 +394,35 @@ namespace WorldMessengerLib.WorldMessages
         public string Message { get; set; }
     }
 
+    [Serializable]
+    public class PlayerAccountsRequest : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.PlayerAccountsRequest;
+    }
+
+    [Serializable]
+    public class PlayerAccountsReply : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.PlayerAccountsReply;
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public List<AccountData> PlayerAccounts { get; set; }
+    }
+
+    [Serializable]
+    public class AdminAccountsRequest : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.AdminAccountsRequest;
+    }
+
+    [Serializable]
+    public class AdminAccountsReply : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.AdminAccountsReply;
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public List<AccountData> AdminAccounts { get; set; }
+    }
 
     
 

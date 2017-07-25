@@ -1,5 +1,8 @@
-﻿namespace WorldMessengerLib.WorldMessages
+﻿using System;
+
+namespace WorldMessengerLib.WorldMessages
 {
+    [Serializable]
     public class PlayerClient
     {
         public PlayerClient(string playerName, string playerId, int connectionId)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using WorldMessengerLib;
 
 namespace CauldronWorldEngine.Database
 {
@@ -89,6 +90,7 @@ namespace CauldronWorldEngine.Database
         {
             try
             {
+                dbConnection.Open();
                 var dbCommand = new SqlCommand("Select Username from ClientLogin");
                 var reader = dbCommand.ExecuteReader();
                 var returnValue = new DbResponse<List<string>> { Success = true, Result = new List<string>() };
@@ -111,11 +113,83 @@ namespace CauldronWorldEngine.Database
             }
         }
 
+        public DbResponse<List<AccountData>> GetPlayerAccounts()
+        {
+            try
+            {
+                dbConnection.Open();
+                var dbCommand = new SqlCommand("Select * from ClientLogin", dbConnection);
+                var reader = dbCommand.ExecuteReader();
+                var returnValue = new DbResponse<List<AccountData>>{Success = true, Result = new List<AccountData>()};
+                while (reader.Read())
+                {
+                    if (reader.HasRows)
+                    {
+                        var data = new AccountData
+                        {
+                            Username = (string) reader["Username"],
+                            ClientId = (string) reader["ClientId"],
+                            CreatedOn = (DateTime) reader["CreatedOn"]
+                        };
+                        var characterCount = new SqlCommand($"Select COUNT(ClientId) from CharacterData where ClientId = '{data.ClientId}'", dbConnection);
+                        data.CharacterCount = (int)characterCount.ExecuteScalar();
+                        returnValue.Result.Add(data);                        
+                    }
+                }
+                return returnValue;
+            }
+            catch (Exception ex)
+            {
+                return new DbResponse<List<AccountData>> {Success = false, Exception = ex};
+            }
+            finally
+            {
+                dbConnection.Close();
+            }
+        }
+
+        public DbResponse<List<AccountData>> GetAdminAccounts()
+        {
+            try
+            {
+                dbConnection.Open();
+                var dbCommand = new SqlCommand("Select * from AdminLogin", dbConnection);
+                var reader = dbCommand.ExecuteReader();
+                var returnValue = new DbResponse<List<AccountData>> { Success = true, Result = new List<AccountData>()};
+                while (reader.Read())
+                {
+                    if (reader.HasRows)
+                    {
+                        var data = new AccountData
+                        {
+                            Username = (string)reader["Username"],
+                            ClientId = (string)reader["ClientId"],
+                            CreatedOn = (DateTime)reader["CreatedOn"]
+                        };
+                        var characterCount = new SqlCommand($"Select COUNT(ClientId) from CharacterData where ClientId = '{data.ClientId}'", dbConnection);
+                        data.CharacterCount = (int)characterCount.ExecuteScalar();
+                        returnValue.Result.Add(data);
+                    }
+                }
+                return returnValue;
+            }
+            catch (Exception ex)
+            {
+                return new DbResponse<List<AccountData>> { Success = false, Exception = ex };
+            }
+            finally
+            {
+                dbConnection.Close();
+            }
+        }
+
         public DbResponse<bool> CreateAdminAccount(string username, string password)
         {
             try
             {
-                var dbCommand = new SqlCommand($"Select top 1 Username from AdminLogin where Username = {username}", dbConnection);
+                dbConnection.Open();
+                var dbCommand = new SqlCommand($"Select top 1 Username from AdminLogin where Username = {username}",
+                    dbConnection);
                 var reader = dbCommand.ExecuteReader();
                 while (reader.Read())
                 {
@@ -129,11 +203,15 @@ namespace CauldronWorldEngine.Database
                         ? new DbResponse<bool> {Success = true, Result = true}
                         : new DbResponse<bool> {Success = true, Result = false};
                 }
-                return new DbResponse<bool> { Success = true, Result = false };
+                return new DbResponse<bool> {Success = true, Result = false};
             }
             catch (Exception ex)
             {
                 return new DbResponse<bool> {Success = false, Exception = ex};
+            }
+            finally
+            {
+                dbConnection.Close();
             }
         }
 
@@ -141,6 +219,7 @@ namespace CauldronWorldEngine.Database
         {
             try
             {
+                dbConnection.Open();
                 var dbCommand = new SqlCommand($"Select top 1 * from AdminLogin where Username = {username}",
                     dbConnection);
                 var reader = dbCommand.ExecuteReader();
@@ -156,13 +235,19 @@ namespace CauldronWorldEngine.Database
             {
                 return new DbResponse<string> {Exception = ex, Success = false};
             }
+            finally
+            {
+                dbConnection.Close();
+            }
         }
 
         public DbResponse<bool> DoesAdminUserExist(string username)
         {
             try
             {
-                var dbCommand = new SqlCommand($"Select top 1 * from AdminLogin where Username = {username}", dbConnection);
+                dbConnection.Open();
+                var dbCommand = new SqlCommand($"Select top 1 * from AdminLogin where Username = {username}",
+                    dbConnection);
                 var reader = dbCommand.ExecuteReader();
                 while (reader.Read())
                 {
@@ -172,7 +257,11 @@ namespace CauldronWorldEngine.Database
             }
             catch (Exception ex)
             {
-                return new DbResponse<bool>{Success = false, Exception = ex};
+                return new DbResponse<bool> {Success = false, Exception = ex};
+            }
+            finally
+            {
+                dbConnection.Close();
             }
 
         }
