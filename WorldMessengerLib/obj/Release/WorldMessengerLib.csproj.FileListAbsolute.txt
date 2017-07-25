@@ -1,0 +1,9 @@
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\bin\Release\WorldMessengerLib.dll
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\bin\Release\WorldMessengerLib.pdb
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\bin\Release\Newtonsoft.Json.dll
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\bin\Release\RabbitMQ.Client.dll
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\bin\Release\Newtonsoft.Json.xml
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\bin\Release\RabbitMQ.Client.xml
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\obj\Release\WorldMessengerLib.csprojResolveAssemblyReference.cache
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\obj\Release\WorldMessengerLib.dll
+c:\users\trogdorreborn\documents\visual studio 2017\Projects\WorldMessengerLib\WorldMessengerLib\obj\Release\WorldMessengerLib.pdb
