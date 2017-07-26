@@ -255,6 +255,7 @@ namespace CauldronWorldEngine
                                     break;
                             }
                         }
+                        _readingManagerMessages = false;
                     });
                     thread.Start();
                 }
@@ -303,10 +304,10 @@ namespace CauldronWorldEngine
         {
             var client = AccountManager.GetClientByPlayerId(message.PlayerId);
             //TODO: Add error message if Client doesn't exist
-            if (client != null)
+            if (client != null || message.IsManager)
             {
                 var result = AccountManager.CreateAccount(message.Username, message.Password, message.Email);
-                var resultMessage = new CreateAccountResultMessage { PlayerId = message.PlayerId, ConnectionId = client.ConnectionId};
+                var resultMessage = new CreateAccountResultMessage { PlayerId = message.PlayerId, ConnectionId = message.IsManager ? 0 : client.ConnectionId};
                 if (result.Success)
                 {
                     resultMessage.Success = result.Result;
