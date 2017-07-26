@@ -216,6 +216,9 @@ namespace CauldronWorldEngine
                                 case WorldMessageType.AdminLoginAttempt:
                                     ReadAdminLoginAttempt(msg.ReadMessage<AdminLoginAttempt>());
                                     break;
+                                case WorldMessageType.WorldTileRequest:
+                                    ReadWorldTileRequest(msg.ReadMessage<WorldTileRequestMessage>(), false);
+                                    break;
 
                             }
                         }
@@ -252,6 +255,9 @@ namespace CauldronWorldEngine
                                     break;
                                 case WorldMessageType.AdminAccountsRequest:
                                     ReadAdminAccountsRequest(msg.ReadMessage<AdminAccountsRequest>());
+                                    break;
+                                case WorldMessageType.WorldTileRequest:
+                                    ReadWorldTileRequest(msg.ReadMessage<WorldTileRequestMessage>(), true);
                                     break;
                             }
                         }
@@ -500,6 +506,34 @@ namespace CauldronWorldEngine
             ManagerSender.SendMessage(result.Success
                 ? new AdminAccountsReply {Success = true, AdminAccounts = result.Result}
                 : new AdminAccountsReply {Success = false, Message = $"{result.Message}: {result.Exception}"});
+        }
+
+        private void ReadWorldTileRequest(WorldTileRequestMessage message, bool IsManager)
+        {
+            var tiles = WorldManager.GetNetTiles();
+            if (IsManager)
+            {
+                ManagerSender.SendMessage(new WorldTileReply {WorldTiles = tiles});
+            }
+            else
+            {
+                var client = AccountManager.GetClientByPlayerId(message.PlayerId);
+                if (client != null)
+                {
+                    UnitySender.SendMessage(new WorldTileReply
+                    {
+                        WorldTiles = tiles,
+                        ConnectionId = client.ConnectionId,
+                        PlayerId = message.PlayerId
+                    });
+                }
+                
+            }
+        }
+
+        private void ReadAddWorldTileMessage(AddWorldTileMessage message)
+        {
+            WorldManager.AddNewTile(new WorldTile {Name = message.TileName, Size = message.Size});
         }
 
     }

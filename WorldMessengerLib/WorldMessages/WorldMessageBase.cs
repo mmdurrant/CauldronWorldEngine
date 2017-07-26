@@ -220,8 +220,9 @@ namespace WorldMessengerLib.WorldMessages
     }
 
     [Serializable]
-    public class WorldTileReply
+    public class WorldTileReply : IWorldMessage
     {
+        public WorldMessageType MessageType { get; } = WorldMessageType.WorldTileReply;
         public int ConnectionId { get; set; }
         public string PlayerId { get; set; }
         public NetWorldTile[] WorldTiles { get; set; }

@@ -1,5 +1,8 @@
-﻿namespace WorldMessengerLib.WorldMessages.NetTiles
+﻿using System;
+
+namespace WorldMessengerLib.WorldMessages.NetTiles
 {
+    [Serializable]
     public class NetLayer
     {
         public int Layer;

@@ -1,5 +1,8 @@
-﻿namespace WorldMessengerLib.WorldMessages.NetTiles
+﻿using System;
+
+namespace WorldMessengerLib.WorldMessages.NetTiles
 {
+    [Serializable]
     public enum TilesetName
     {
         Fantasy1
