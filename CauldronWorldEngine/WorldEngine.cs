@@ -259,6 +259,9 @@ namespace CauldronWorldEngine
                                 case WorldMessageType.WorldTileRequest:
                                     ReadWorldTileRequest(msg.ReadMessage<WorldTileRequestMessage>(), true);
                                     break;
+                                case WorldMessageType.AddWorldTile:
+                                    ReadAddWorldTileMessage(msg.ReadMessage<AddWorldTileMessage>());
+                                    break;
                             }
                         }
                         _readingManagerMessages = false;
@@ -533,7 +536,8 @@ namespace CauldronWorldEngine
 
         private void ReadAddWorldTileMessage(AddWorldTileMessage message)
         {
-            WorldManager.AddNewTile(new WorldTile {Name = message.TileName, Size = message.Size});
+            var result = WorldManager.AddNewTile(new WorldTile {Name = message.TileName, Size = message.Size});
+            ManagerSender.SendMessage(new AddWorldTileReply {Success = result, Message = result ? "Tile added succesfully!" : "Failed to add tile"});
         }
 
     }

@@ -58,7 +58,8 @@ namespace WorldMessengerLib.WorldMessages
         AdminAccountsRequest,
         AdminAccountsReply,
         PlayerAccountsRequest,
-        PlayerAccountsReply
+        PlayerAccountsReply,
+        AddWorldTileReply
     }
 
     [Serializable]
@@ -329,6 +330,14 @@ namespace WorldMessengerLib.WorldMessages
         public WorldMessageType MessageType { get; } = WorldMessageType.AddWorldTile;
         public string TileName { get; set; }
         public WorldVector2 Size { get; set; }
+    }
+
+    [Serializable]
+    public class AddWorldTileReply : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.AddWorldTileReply;
+        public bool Success { get; set; }
+        public string Message { get; set; }
     }
 
     [Serializable]
