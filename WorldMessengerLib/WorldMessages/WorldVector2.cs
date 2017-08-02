@@ -4,7 +4,7 @@ using UnityEngine;
 namespace WorldMessengerLib.WorldMessages
 {
     [Serializable]
-    public class WorldVector2
+    public struct WorldVector2
     {
         public float X;
         public float Y;

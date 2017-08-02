@@ -56,11 +56,21 @@ namespace CauldronWorldEngine.Managers
             return true;
         }
 
+
+
         public bool RemoveWorldTile(string worldName)
         {
             WorldTiles[worldName].Stop();
             WorldTiles[worldName] = null;
             return WorldTiles.Remove(worldName);
+        }
+
+        public bool SetWorldTileSize(string worldName, Vector2 size)
+        {
+            WorldTiles[worldName].Stop();
+            WorldTiles[worldName].ResizeWorld(size);
+            WorldTiles[worldName].Start();
+            return true;
         }
 
         public bool MoveObject(string obj, string worldTile, Vector2 position)

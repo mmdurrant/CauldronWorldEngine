@@ -10,7 +10,6 @@ namespace CauldronWorldEngine.World
     public class WorldTile
     {
         public string Name;
-        public TilesetName Tileset;
         public Dictionary<int, WorldLayer> WorldLayers;
         public WorldVector2 Size;
 
@@ -22,6 +21,26 @@ namespace CauldronWorldEngine.World
         {
             Name = name;
             WorldLayers = new Dictionary<int, WorldLayer>();
+        }
+
+        public static NetWorldTile ToNetWorldTile(WorldTile tile)
+        {
+            var layers = new NetLayer[tile.WorldLayers.Count];
+            for (var i = 0; i < tile.WorldLayers.Count; i++)
+            {
+                layers[i] = WorldLayer.ToNetLayer(tile.WorldLayers[i]);
+            }
+            return new NetWorldTile {Layers = layers, Name = tile.Name, Size = tile.Size};
+        }
+
+        public static WorldTile ConvertToWorldTile(NetWorldTile tile)
+        {
+            var worldTile = new WorldTile(tile.Name) {Size = tile.Size};
+            for (var i = 0; i < tile.Layers.Length; i++)
+            {
+                worldTile.WorldLayers.Add(i, WorldLayer.ConvertToWorldLayer(tile.Layers[i]));
+            }
+            return worldTile;
         }
     }
 }

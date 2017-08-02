@@ -11,6 +11,7 @@ using UnityEngine.Assertions.Must;
 using WorldMessengerLib;
 using WorldMessengerLib.WorldMessages;
 using WorldMessengerLib.WorldMessages.Characters;
+using WorldMessengerLib.WorldMessages.NetTiles;
 
 namespace CauldronWorldEngine
 {
@@ -175,7 +176,7 @@ namespace CauldronWorldEngine
                         while (UnityReceiver.Messages.Count > 0)
                         {
                             var msg = UnityReceiver.Messages.Dequeue();
-                            Console.WriteLine(msg.MessageType.ToString());
+                            //Console.WriteLine(msg.MessageType.ToString());
                             switch (msg.MessageType)
                             {
                                 case WorldMessageType.LoginRequest:
@@ -218,6 +219,12 @@ namespace CauldronWorldEngine
                                     break;
                                 case WorldMessageType.WorldTileRequest:
                                     ReadWorldTileRequest(msg.ReadMessage<WorldTileRequestMessage>(), false);
+                                    break;
+                                case WorldMessageType.SaveWorldTileRequest:
+                                    ReadSaveWorldTileMessage(msg.ReadMessage<SaveWorldTileRequest>());
+                                    break;
+                                case WorldMessageType.SetTile:
+                                    ReadSetTileMessage(msg.ReadMessage<SetTileMessage>());
                                     break;
 
                             }
@@ -511,16 +518,16 @@ namespace CauldronWorldEngine
                 : new AdminAccountsReply {Success = false, Message = $"{result.Message}: {result.Exception}"});
         }
 
-        private void ReadWorldTileRequest(WorldTileRequestMessage message, bool IsManager)
+        private void ReadWorldTileRequest(WorldTileRequestMessage message, bool isManager)
         {
             var tiles = WorldManager.GetNetTiles();
-            if (IsManager)
+            if (isManager)
             {
                 ManagerSender.SendMessage(new WorldTileReply {WorldTiles = tiles});
             }
             else
             {
-                var client = AccountManager.GetClientByPlayerId(message.PlayerId);
+                var client = message.IsAdmin ? AdminAccountManager.GetClientByPlayerId(message.PlayerId) : AccountManager.GetClientByPlayerId(message.PlayerId);
                 if (client != null)
                 {
                     UnitySender.SendMessage(new WorldTileReply
@@ -530,16 +537,40 @@ namespace CauldronWorldEngine
                         PlayerId = message.PlayerId
                     });
                 }
-                
             }
         }
 
         private void ReadAddWorldTileMessage(AddWorldTileMessage message)
         {
-            var result = WorldManager.AddNewTile(new WorldTile {Name = message.TileName, Size = message.Size});
+            var result = WorldManager.AddNewTile(new WorldTile{Name = message.TileName, Size = message.Size});
             ManagerSender.SendMessage(new AddWorldTileReply {Success = result, Message = result ? "Tile added succesfully!" : "Failed to add tile"});
         }
 
+        private void ReadSaveWorldTileMessage(SaveWorldTileRequest message)
+        {
+            var client = AdminAccountManager.GetClientByPlayerId(message.PlayerId);
+            if (client != null)
+            {
+                var result = WorldManager.SetWorldTile(WorldTile.ConvertToWorldTile(message.WorldTile));
+                UnitySender.SendMessage(new SaveWorldTileReply
+                {
+                    ConnectionId = client.ConnectionId,
+                    Success = result,
+                    WorldTile = message.WorldTile.Name
+                });
+            }
+            SaveData(Settings.SaveDataPath);
+            
+        }
+
+        private void ReadSetTileMessage(SetTileMessage message)
+        {
+            var client = AdminAccountManager.GetClientByPlayerId(message.PlayerId);
+            if (client != null)
+            {
+                WorldManager.SetSectionTile(new SectionTile{X = (int)message.Position.X, Y = (int)message.Position.Y, TileId =  message.TileId}, message.WorldTile, message.Layer, message.Position);
+            }
+        }
     }
 
 

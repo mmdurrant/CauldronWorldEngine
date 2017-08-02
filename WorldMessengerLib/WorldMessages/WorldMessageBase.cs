@@ -59,7 +59,9 @@ namespace WorldMessengerLib.WorldMessages
         AdminAccountsReply,
         PlayerAccountsRequest,
         PlayerAccountsReply,
-        AddWorldTileReply
+        AddWorldTileReply,
+        SaveWorldTileRequest,
+        SaveWorldTileReply
     }
 
     [Serializable]
@@ -160,6 +162,7 @@ namespace WorldMessengerLib.WorldMessages
     public class LoginRequestMessage : IWorldMessage
     {
         public WorldMessageType MessageType { get; } = WorldMessageType.LoginRequest;
+        
         public int ConnectionId { get; set; }
     }
 
@@ -217,6 +220,7 @@ namespace WorldMessengerLib.WorldMessages
     public class WorldTileRequestMessage : IWorldMessage
     {
         public WorldMessageType MessageType { get; } = WorldMessageType.WorldTileRequest;
+        public bool IsAdmin { get; set; }
         public string PlayerId { get; set; }
     }
 
@@ -322,6 +326,7 @@ namespace WorldMessengerLib.WorldMessages
         public int Layer { get; set; }
         public WorldVector2 Position { get; set; }
         public uint TileId { get; set; }
+        public string PlayerId { get; set; }
     }
 
     [Serializable]
@@ -433,6 +438,25 @@ namespace WorldMessengerLib.WorldMessages
         public string Message { get; set; }
         public List<AccountData> AdminAccounts { get; set; }
     }
+
+    [Serializable]
+    public class SaveWorldTileRequest : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.SaveWorldTileRequest;
+        public string PlayerId { get; set; }
+        public NetWorldTile WorldTile { get; set; }
+    }
+
+    [Serializable]
+    public class SaveWorldTileReply : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.SaveWorldTileReply;
+        public int ConnectionId { get; set; }
+        public string WorldTile { get; set; }
+        public bool Success { get; set; }
+    }
+
+    
 
     
 

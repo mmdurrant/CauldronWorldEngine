@@ -188,22 +188,21 @@ namespace CauldronWorldEngine.Database
             try
             {
                 dbConnection.Open();
-                var dbCommand = new SqlCommand($"Select top 1 Username from AdminLogin where Username = {username}",
+                var dbCommand = new SqlCommand($"Select top 1 Username from AdminLogin where Username = '{username}'",
                     dbConnection);
                 var reader = dbCommand.ExecuteReader();
                 while (reader.Read())
                 {
-                    if (reader.HasRows) continue;
-                    var clientId = Guid.NewGuid().ToString();
-                    var create =
-                        new SqlCommand(
-                            $"insert into ClientLogin (ClientId,Username,ClientPassword,CreatedOn) VALUES ('{clientId}', '{username}', '{SecurePasswordHasher.Hash(password)}', '{DateTime.UtcNow}')",
-                            dbConnection);
-                    return create.ExecuteNonQuery() == 1
-                        ? new DbResponse<bool> {Success = true, Result = true}
-                        : new DbResponse<bool> {Success = true, Result = false};
+                    if (reader.HasRows) return new DbResponse<bool> { Success = true, Result = false };
                 }
-                return new DbResponse<bool> {Success = true, Result = false};
+                var clientId = Guid.NewGuid().ToString();
+                var create =
+                    new SqlCommand(
+                        $"insert into AdminLogin (ClientId,Username,ClientPassword,CreatedOn) VALUES ('{clientId}', '{username}', '{SecurePasswordHasher.Hash(password)}', '{DateTime.UtcNow}')",
+                        dbConnection);
+                return create.ExecuteNonQuery() == 1
+                    ? new DbResponse<bool> { Success = true, Result = true }
+                    : new DbResponse<bool> { Success = true, Result = false };
             }
             catch (Exception ex)
             {
@@ -220,14 +219,15 @@ namespace CauldronWorldEngine.Database
             try
             {
                 dbConnection.Open();
-                var dbCommand = new SqlCommand($"Select top 1 * from AdminLogin where Username = {username}",
+                var dbCommand = new SqlCommand($"Select top 1 * from AdminLogin where Username = '{username}'",
                     dbConnection);
                 var reader = dbCommand.ExecuteReader();
                 while (reader.Read())
                 {
-                    return reader.HasRows
-                        ? new DbResponse<string> {Success = true, Result = (string) reader["ClientId"]}
-                        : new DbResponse<string> {Success = true, Result = null};
+                    if (reader.HasRows && SecurePasswordHasher.Verify(password, (string) reader["ClientPassword"]))
+                    {
+                        return new DbResponse<string> {Success = true, Result = (string) reader["ClientId"]};
+                    }
                 }
                 return new DbResponse<string> {Success = true, Result = null};
             }

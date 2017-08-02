@@ -2,6 +2,7 @@
 using System.Linq;
 using CauldronWorldEngine.World;
 using WorldMessengerLib;
+using WorldMessengerLib.WorldMessages;
 using WorldMessengerLib.WorldMessages.NetTiles;
 
 namespace CauldronWorldEngine.Managers
@@ -41,6 +42,78 @@ namespace CauldronWorldEngine.Managers
             return false;
         }
 
+        public bool SetWorldTile(WorldTile tile)
+        {
+            if (WorldTiles.ContainsKey(tile.Name))
+            {
+                if (WorldTiles[tile.Name].Size.X != tile.Size.X || WorldTiles[tile.Name].Size.Y != tile.Size.Y)
+                {
+                    CollisionSender.SendMessage(new SetWorldTileSizeMessage
+                    {
+                        TileName = tile.Name,
+                        Size = tile.Size
+                    });
+                }
+                WorldTiles[tile.Name] = tile;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        public bool SetSectionTile(SectionTile tile, string world, int layer, WorldVector2 pos)
+        {
+            if (WorldTiles.ContainsKey(world))
+            {
+                var worldTile = WorldTiles[world];
+                if (worldTile.WorldLayers.ContainsKey(layer))
+                {
+                    var worldLayer = worldTile.WorldLayers[layer];
+                    if (worldLayer.LayerTiles.ContainsKey(pos))
+                    {
+                        worldLayer.LayerTiles[pos] = tile;
+                    }
+                    else
+                    {
+                        worldLayer.LayerTiles.Add(pos, tile);
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool SetLayer(string world, int layer, TilesetName tileset)
+        {
+            if (WorldTiles.ContainsKey(world))
+            {
+                var worldtile = WorldTiles[world];
+                if (worldtile.WorldLayers.ContainsKey(layer))
+                {
+                    worldtile.WorldLayers[layer].TilesetName = tileset;
+                }
+                else
+                {
+                    worldtile.WorldLayers.Add(layer, new WorldLayer{Layer = layer, TilesetName = tileset, LayerTiles = new Dictionary<WorldVector2, SectionTile>()});
+                }
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public List<WorldTile> GetTiles()
         {
             return WorldTiles.Values.ToList();
@@ -50,34 +123,9 @@ namespace CauldronWorldEngine.Managers
         {
             var result = new NetWorldTile[WorldTiles.Count];
             var tileCount = 0;
-            foreach (var tile in WorldTiles.Values)
+            foreach (var worldTile in WorldTiles.Values)
             {
-                var worldTile = new NetWorldTile
-                {
-                    Name = tile.Name,
-                    Size = tile.Size,
-                    Layers = new NetLayer[tile.WorldLayers.Count]
-                };
-                var layerCount = 0;
-                foreach (var layer in tile.WorldLayers.Values)
-                {
-                    var netLayer = new NetLayer
-                    {
-                        Layer = layer.Layer,
-                        Tiles = new NetSectionTile[layer.LayerTiles.Count]
-                    };
-                    var sectionCount = 0;
-                    foreach (var section in layer.LayerTiles.Values)
-                    {
-                        netLayer.Tiles[sectionCount] =
-                            new NetSectionTile {TileId = section.TileId, X = section.X, Y = section.Y};
-                        sectionCount++;
-                    }
-                    worldTile.Layers[layerCount] = netLayer;
-                    layerCount++;
-                }
-                result[tileCount] = worldTile;
-                tileCount++;
+                result[tileCount] = WorldTile.ToNetWorldTile(worldTile);
             }
             return result;
         }
