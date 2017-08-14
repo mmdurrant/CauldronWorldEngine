@@ -18,5 +18,10 @@ namespace WorldMessengerLib.WorldMessages
         {
             return new WorldVector2 {X = vector.x, Y = vector.y};
         }
+
+        public override string ToString()
+        {
+            return $"{X},{Y}";
+        }
     }
 }

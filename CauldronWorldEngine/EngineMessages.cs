@@ -26,6 +26,7 @@ namespace CauldronWorldEngine
     {
         public WorldMessageType MessageType { get; } = WorldMessageType.AddCollisionEngine;
         public string Name { get; set; }
+        public WorldVector2 TopLeft { get; set; }
         public WorldVector2 Size { get; set; }
     }
 

@@ -10,7 +10,7 @@ namespace CauldronWorldEngine.Managers
 {
     public class CollisionManager
     {
-        public int DefaultMaxTimes { get; set; } = 16;
+        public int DefaultMaxItems { get; set; } = 16;
         private Dictionary<string, CollisionEngine> WorldTiles { get; set; } = new Dictionary<string, CollisionEngine>();
         private Receiver PositionReceiver { get; set; } = new Receiver(StaticChannelNames.CollisionChannel);
         private readonly object _collisionMessageLock = new object();
@@ -43,10 +43,10 @@ namespace CauldronWorldEngine.Managers
             _started = false;
         }
 
-        public bool AddWorldTile(string worldName, Vector2 size)
+        public bool AddWorldTile(string worldName, Vector2 topLeft, Vector2 size)
         {
             if (WorldTiles.ContainsKey(worldName)) return false;
-            WorldTiles.Add(worldName, new CollisionEngine(new QuadTree(size, DefaultMaxTimes), worldName));
+            WorldTiles.Add(worldName, new CollisionEngine(new QuadTree(new FRect(topLeft, size), DefaultMaxItems), worldName));
             var thread = new Thread(() =>
             {
                 WorldTiles[worldName].Start();
@@ -65,10 +65,10 @@ namespace CauldronWorldEngine.Managers
             return WorldTiles.Remove(worldName);
         }
 
-        public bool SetWorldTileSize(string worldName, Vector2 size)
+        public bool SetWorldTileSize(string worldName,Vector2 topLeft, Vector2 size)
         {
             WorldTiles[worldName].Stop();
-            WorldTiles[worldName].ResizeWorld(size);
+            WorldTiles[worldName].ResizeWorld(topLeft,size);
             WorldTiles[worldName].Start();
             return true;
         }
@@ -125,7 +125,7 @@ namespace CauldronWorldEngine.Managers
                                     break;
                                 case WorldMessageType.AddCollisionEngine:
                                     var add = msg.ReadMessage<AddCollisionEngineMessage>();
-                                    AddWorldTile(add.Name, StaticConversionMethods.ToMicrosoftVector2(add.Size));
+                                    AddWorldTile(add.Name, StaticConversionMethods.ToMicrosoftVector2(add.TopLeft), StaticConversionMethods.ToMicrosoftVector2(add.Size));
                                     break;
                                 case WorldMessageType.RemoveCollisionEngine:
                                     var remove = msg.ReadMessage<RemoveCollisionEngineMessage>();

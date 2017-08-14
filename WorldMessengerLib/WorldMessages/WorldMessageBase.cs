@@ -334,6 +334,7 @@ namespace WorldMessengerLib.WorldMessages
     {
         public WorldMessageType MessageType { get; } = WorldMessageType.AddWorldTile;
         public string TileName { get; set; }
+        public WorldVector2 TopLeft { get; set; }
         public WorldVector2 Size { get; set; }
     }
 
@@ -357,6 +358,7 @@ namespace WorldMessengerLib.WorldMessages
     {
         public WorldMessageType MessageType { get; } = WorldMessageType.SetWorldTileSize;
         public string TileName { get; set; }
+        public WorldVector2 TopLeft { get; set; }
         public WorldVector2 Size { get; set; }
     }
 

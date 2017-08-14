@@ -25,6 +25,7 @@ namespace CauldronWorldEngine.Managers
                 CollisionSender.SendMessage(new AddCollisionEngineMessage
                 {
                     Name = tile.Name,
+                    TopLeft = tile.TopLeft,
                     Size = tile.Size
                 });
                 return true;

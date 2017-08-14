@@ -8,6 +8,7 @@ namespace WorldMessengerLib.WorldMessages.NetTiles
     {
         public string Name;
         public WorldVector2 Size;
+        public WorldVector2 TopLeft;
         public NetLayer[] Layers;
     }
 }

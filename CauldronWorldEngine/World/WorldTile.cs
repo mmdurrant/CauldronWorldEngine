@@ -11,6 +11,7 @@ namespace CauldronWorldEngine.World
     {
         public string Name;
         public Dictionary<int, WorldLayer> WorldLayers;
+        public WorldVector2 TopLeft;
         public WorldVector2 Size;
 
         public WorldTile()
