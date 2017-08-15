@@ -162,7 +162,6 @@ namespace WorldMessengerLib.WorldMessages
     public class LoginRequestMessage : IWorldMessage
     {
         public WorldMessageType MessageType { get; } = WorldMessageType.LoginRequest;
-        
         public int ConnectionId { get; set; }
     }
 
@@ -172,6 +171,13 @@ namespace WorldMessengerLib.WorldMessages
         public WorldMessageType MessageType { get; } = WorldMessageType.LoginResult;
         public int ConnectionId { get; set; }
         public string PlayerId { get; set; }
+    }
+
+    [Serializable]
+    public class DisconnectMessage : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.Disconnect;
+        public int ConnectionId;
     }
 
     [Serializable]
@@ -309,13 +315,6 @@ namespace WorldMessengerLib.WorldMessages
         public WorldMessageType MessageType { get; } = WorldMessageType.UpdateCharacterWorldTile;
         public string PlayerId { get; set; }
         public string WorldTile { get; set; }
-    }
-
-    [Serializable]
-    public class DiscconectMessage : IWorldMessage
-    {
-        public WorldMessageType MessageType { get; } = WorldMessageType.Disconnect;
-        public int ConnectionId { get; set; }
     }
 
     [Serializable]

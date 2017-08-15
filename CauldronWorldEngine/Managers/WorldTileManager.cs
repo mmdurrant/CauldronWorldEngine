@@ -47,12 +47,13 @@ namespace CauldronWorldEngine.Managers
         {
             if (WorldTiles.ContainsKey(tile.Name))
             {
-                if (WorldTiles[tile.Name].Size.X != tile.Size.X || WorldTiles[tile.Name].Size.Y != tile.Size.Y)
+                if (WorldTiles[tile.Name].Size.X != tile.Size.X || WorldTiles[tile.Name].Size.Y != tile.Size.Y || tile.TopLeft != WorldTiles[tile.Name].TopLeft)
                 {
                     CollisionSender.SendMessage(new SetWorldTileSizeMessage
                     {
                         TileName = tile.Name,
-                        Size = tile.Size
+                        Size = tile.Size,
+                        TopLeft = tile.TopLeft
                     });
                 }
                 WorldTiles[tile.Name] = tile;
@@ -127,6 +128,7 @@ namespace CauldronWorldEngine.Managers
             foreach (var worldTile in WorldTiles.Values)
             {
                 result[tileCount] = WorldTile.ToNetWorldTile(worldTile);
+                tileCount++;
             }
             return result;
         }

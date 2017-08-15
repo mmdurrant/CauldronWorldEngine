@@ -210,6 +210,7 @@ namespace CauldronWorldEngine
                                     ReadUpdatePosition(msg.ReadMessage<UpdatePositionMessage>());
                                     break;
                                 case WorldMessageType.Disconnect:
+                                    ReadDisconnect(msg.ReadMessage<DisconnectMessage>());
                                     break;
                                 case WorldMessageType.AdminLoginRequest:
                                     ReadAdminLoginRequest(msg.ReadMessage<AdminLoginRequest>());
@@ -226,7 +227,6 @@ namespace CauldronWorldEngine
                                 case WorldMessageType.SetTile:
                                     ReadSetTileMessage(msg.ReadMessage<SetTileMessage>());
                                     break;
-
                             }
                         }
                         _readingUnityMessages = false;
@@ -314,6 +314,16 @@ namespace CauldronWorldEngine
                 }
             }
             UnitySender.SendMessage(result);
+        }
+
+        private void ReadDisconnect(DisconnectMessage message)
+        {
+            var client = AccountManager.GetClientByConnectionId(message.ConnectionId);
+            if (client != null)
+            {
+                CharacterManager.DeactivateCharacter(client.PlayerId);
+            }
+            AccountManager.DisconnectClientByConnectionId(message.ConnectionId);
         }
 
         private void ReadCreateAccount(CreateAccountMessage message)
@@ -542,7 +552,7 @@ namespace CauldronWorldEngine
 
         private void ReadAddWorldTileMessage(AddWorldTileMessage message)
         {
-            var result = WorldManager.AddNewTile(new WorldTile{Name = message.TileName, Size = message.Size});
+            var result = WorldManager.AddNewTile(new WorldTile{Name = message.TileName, Size = message.Size, TopLeft = message.TopLeft});
             ManagerSender.SendMessage(new AddWorldTileReply {Success = result, Message = result ? "Tile added succesfully!" : "Failed to add tile"});
         }
 

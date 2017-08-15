@@ -31,12 +31,12 @@ namespace CauldronWorldEngine.World
             {
                 layers[i] = WorldLayer.ToNetLayer(tile.WorldLayers[i]);
             }
-            return new NetWorldTile {Layers = layers, Name = tile.Name, Size = tile.Size};
+            return new NetWorldTile {Layers = layers, Name = tile.Name, Size = tile.Size, TopLeft = tile.TopLeft};
         }
 
         public static WorldTile ConvertToWorldTile(NetWorldTile tile)
         {
-            var worldTile = new WorldTile(tile.Name) {Size = tile.Size};
+            var worldTile = new WorldTile(tile.Name) {Size = tile.Size, TopLeft = tile.TopLeft};
             for (var i = 0; i < tile.Layers.Length; i++)
             {
                 worldTile.WorldLayers.Add(i, WorldLayer.ConvertToWorldLayer(tile.Layers[i]));

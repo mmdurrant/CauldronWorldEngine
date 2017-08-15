@@ -130,7 +130,13 @@ namespace CauldronWorldEngine.Managers
                                 case WorldMessageType.RemoveCollisionEngine:
                                     var remove = msg.ReadMessage<RemoveCollisionEngineMessage>();
                                     RemoveWorldTile(remove.Name);
-                                    break; 
+                                    break;
+                                case WorldMessageType.SetWorldTileSize:
+                                    var resize = msg.ReadMessage<SetWorldTileSizeMessage>();
+                                    SetWorldTileSize(resize.TileName,
+                                        StaticConversionMethods.ToMicrosoftVector2(resize.TopLeft),
+                                        StaticConversionMethods.ToMicrosoftVector2(resize.Size));
+                                    break;
                             }
                         }
                     });

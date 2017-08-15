@@ -21,16 +21,17 @@ namespace CauldronWorldEngine.World
             foreach (var tile in layer.LayerTiles)
             {
                 tiles[tileCount] = SectionTile.ToNetWorldTile(tile.Value);
+                tileCount++;
             }
             return new NetLayer {Layer = layer.Layer, Tileset = layer.TilesetName, Tiles = tiles};
         }
 
         public static WorldLayer ConvertToWorldLayer(NetLayer layer)
         {
-            var worldLayer = new WorldLayer();
+            var worldLayer = new WorldLayer {Layer = layer.Layer, TilesetName = layer.Tileset};
             foreach (var tile in layer.Tiles)
             {
-                worldLayer.LayerTiles.Add(new WorldVector2{ X = tile.X,Y =tile.Y }, SectionTile.ConvertToSectionTile(tile));
+                worldLayer.LayerTiles.Add(new WorldVector2{ X = tile.X, Y= tile.Y }, SectionTile.ConvertToSectionTile(tile));
             }
             return worldLayer;
         }
