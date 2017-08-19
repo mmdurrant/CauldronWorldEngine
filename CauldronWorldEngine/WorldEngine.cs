@@ -63,11 +63,24 @@ namespace CauldronWorldEngine
 
         public void SaveData(string path)
         {
+            Console.WriteLine($"Saving data");
             var data = new WorldData { Timestamp = _currentTime, WorldTiles = WorldManager.GetTiles() };
+            var objectData = WorldObjectManager.GetData();
+            var collisionData = CollisionManager.GetData();
             try
             {
                 var savePath = $@"{path}\WorldData";
+                Console.WriteLine($"Saving world data to {savePath}");
                 FileManager.WriteToBinaryFile(savePath, data);
+
+                var objectPath = $@"{path}\WorldObjectData";
+                Console.WriteLine($"Saving world object data to {objectPath}");
+                FileManager.WriteToBinaryFile(objectPath, objectData);
+
+                var collisionPath = $@"{path}\WorldCollisionData";
+                Console.WriteLine($"Saving world collision data to {collisionPath}");
+                FileManager.WriteToBinaryFile(collisionPath, collisionData);
+
                 if (Settings != null)
                 {
                     Settings.SaveDataPath = path;
@@ -87,11 +100,13 @@ namespace CauldronWorldEngine
                     From = "FileManager",
                     Message = "Exception during SaveData"
                 });
+                Console.WriteLine($"Error during LoadData() - {ex}");
             }
         }
 
         public void LoadData(string path)
         {
+            Console.WriteLine("Loading data");
             try
             {
                 var data = FileManager.ReadFromBinaryFile<WorldData>($@"{path}\WorldData");
@@ -103,6 +118,22 @@ namespace CauldronWorldEngine
                     {
                         WorldManager.AddNewTile(tile);
                     }
+                    Console.WriteLine("World Data loaded succesfully");
+                }
+
+                var objectData = FileManager.ReadFromBinaryFile<WorldObjectData>($@"{path}\WorldObjectData");
+                if (objectData != null)
+                {
+                    WorldObjectManager.LoadData(objectData);
+                    Console.WriteLine("World Object Data loaded succesfully");
+                }
+
+                
+                var collisionData = FileManager.ReadFromBinaryFile<WorldCollisionData>($@"{path}\WorldCollisionData");
+                if (collisionData != null)
+                {
+                    CollisionManager.LoadData(collisionData);
+                    Console.WriteLine("World Collision data loaded succesfully");
                 }
             }
             catch (Exception ex)
@@ -268,6 +299,18 @@ namespace CauldronWorldEngine
                                     break;
                                 case WorldMessageType.AddWorldTile:
                                     ReadAddWorldTileMessage(msg.ReadMessage<AddWorldTileMessage>());
+                                    break;
+                                case WorldMessageType.AddWorldObjectTypeRequest:
+                                    ReadAddWorldObjectTypeMessage(msg.ReadMessage<AddWorldObjectTypeRequest>());
+                                    break;
+                                case WorldMessageType.RemoveWorldObjectTypeRequest:
+                                    ReadRemoveWorldObjectTypeMessage(msg.ReadMessage<RemoveWorldObjectTypeRequest>());
+                                    break;
+                                case WorldMessageType.GetWorldObjectTypesRequest:
+                                    ReadGetWorldObjectTypesMessage_FromManager(msg.ReadMessage<GetWorldObjectTypesRequest>());
+                                    break;
+                                case WorldMessageType.SetWorldObjectTypeRequest:
+                                    ReadSetWorldObjectTypeMessage(msg.ReadMessage<SetWorldObjectTypeRequest>());
                                     break;
                             }
                         }
@@ -580,6 +623,44 @@ namespace CauldronWorldEngine
             {
                 WorldManager.SetSectionTile(new SectionTile{X = (int)message.Position.X, Y = (int)message.Position.Y, TileId =  message.TileId}, message.WorldTile, message.Layer, message.Position);
             }
+        }
+
+        private void ReadAddWorldObjectTypeMessage(AddWorldObjectTypeRequest message)
+        {
+            var result = WorldObjectManager.AddObjectType(message.Type);
+            ManagerSender.SendMessage(new AddWorldObjectTypeReply
+            {
+                Success = result,
+                Message = result ? "World Object Type Added Succesfully!" : "Failed to add World Object Type"
+            });
+        }
+
+        private void ReadRemoveWorldObjectTypeMessage(RemoveWorldObjectTypeRequest message)
+        {
+            var result = WorldObjectManager.RemoveObjectType(message.WorldObjectType);
+            ManagerSender.SendMessage(new RemoveWorldObjectTypeReply
+            {
+                Success = result,
+                Message = result ? "World Object Type Removed Succesfully!" : "Failed to remove World Object Type"
+            });
+        }
+
+        private void ReadGetWorldObjectTypesMessage_FromManager(GetWorldObjectTypesRequest message)
+        {
+            var result = WorldObjectManager.GetObjectTypes();
+            ManagerSender.SendMessage(new GetWorldObjectsTypeResult {WorldObjectTypes = result});
+        }
+
+        private void ReadSetWorldObjectTypeMessage(SetWorldObjectTypeRequest message)
+        {
+            var result = WorldObjectManager.SetObjectType(message.WorldObjectType);
+            ManagerSender.SendMessage(new SetWorldObjectTypeReply
+            {
+                Success = result,
+                Message = result
+                    ? $"Object Type {message.WorldObjectType.Type} set succesfully!"
+                    : $"Unable to set Object Type {message.WorldObjectType.Type}"
+            });
         }
     }
 

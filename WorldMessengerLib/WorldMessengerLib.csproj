@@ -63,13 +63,18 @@
     <Compile Include="WorldMessages\NetTiles\TilesetName.cs" />
     <Compile Include="WorldMessages\PlayerClient.cs" />
     <Compile Include="WorldMessages\WorldMessageBase.cs" />
+    <Compile Include="WorldMessages\WorldObjectType.cs" />
     <Compile Include="WorldMessages\WorldVector2.cs" />
+    <Compile Include="WorldObjectProperties\BoolProperty.cs" />
+    <Compile Include="WorldObjectProperties\FloatProperty.cs" />
+    <Compile Include="WorldObjectProperties\IntProperty.cs" />
+    <Compile Include="WorldObjectProperties\IWorldObjectProperty.cs" />
+    <Compile Include="WorldObjectProperties\PropertyType.cs" />
+    <Compile Include="WorldObjectProperties\StringProperty.cs" />
+    <Compile Include="WorldObjectProperties\Vector2Property.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="External References\UnityEngine.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

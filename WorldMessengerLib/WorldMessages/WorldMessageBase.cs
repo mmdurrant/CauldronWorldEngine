@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using CauldronWorldEngine;
 using UnityEngine;
 using WorldMessengerLib.WorldMessages.Characters;
 using WorldMessengerLib.WorldMessages.NetTiles;
@@ -61,7 +62,15 @@ namespace WorldMessengerLib.WorldMessages
         PlayerAccountsReply,
         AddWorldTileReply,
         SaveWorldTileRequest,
-        SaveWorldTileReply
+        SaveWorldTileReply,
+        AddWorldObjectTypeRequest,
+        AddWorldObjectTypeReply,
+        RemoveWorldObjectTypeRequest,
+        RemoveWorldObjectTypeReply,
+        GetWorldObjectTypesRequest,
+        GetWorldObjectTypesReply,
+        SetWorldObjectTypeRequest,
+        SetWorldObjectTypeReply
     }
 
     [Serializable]
@@ -455,7 +464,69 @@ namespace WorldMessengerLib.WorldMessages
         public int ConnectionId { get; set; }
         public string WorldTile { get; set; }
         public bool Success { get; set; }
+
     }
+
+    [Serializable]
+    public class AddWorldObjectTypeRequest : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.AddWorldObjectTypeRequest;
+        public WorldObjectType Type { get; set; }
+    }
+
+    [Serializable]
+    public class AddWorldObjectTypeReply : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.AddWorldObjectTypeReply;
+        public bool Success { get; set; }
+        public string Message { get; set; }
+    }
+
+    [Serializable]
+    public class RemoveWorldObjectTypeRequest : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.RemoveWorldObjectTypeRequest;
+        public string WorldObjectType { get; set; }
+    }
+
+    [Serializable]
+    public class RemoveWorldObjectTypeReply : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.RemoveWorldObjectTypeRequest;
+        public bool Success { get; set; }
+        public string Message { get; set; }
+    }
+    [Serializable]
+    public class GetWorldObjectTypesRequest : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.GetWorldObjectTypesRequest;
+        public string PlayerId { get; set; }
+        public bool IsAdmin { get; set; }
+    }
+
+    [Serializable]
+    public class GetWorldObjectsTypeResult : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.GetWorldObjectTypesReply;
+        public List<WorldObjectType> WorldObjectTypes { get; set; }
+    }
+
+    [Serializable]
+    public class SetWorldObjectTypeRequest : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.SetWorldObjectTypeRequest;
+        public WorldObjectType WorldObjectType { get; set; }
+    }
+
+    [Serializable]
+    public class SetWorldObjectTypeReply : IWorldMessage
+    {
+        public WorldMessageType MessageType { get; } = WorldMessageType.SetWorldObjectTypeReply;
+        public bool Success { get; set; }
+        public string Message { get; set; }
+    }
+
+
 
     
 

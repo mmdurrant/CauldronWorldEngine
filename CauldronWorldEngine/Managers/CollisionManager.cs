@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using CauldronWorldEngine.World;
 using CollisionEngineLib;
 using CollisionEngineLib.Objects;
 using Microsoft.Xna.Framework;
@@ -143,6 +144,28 @@ namespace CauldronWorldEngine.Managers
                     thread.Start();
                 }
             }
+        }
+
+        public WorldCollisionData GetData()
+        {
+            var data = new WorldCollisionData {CollisionData = new List<CollisionData>()};
+            foreach (var engine in WorldTiles.Values)
+            {
+                data.CollisionData.Add(engine.GetData());
+            }
+            return data;
+        }
+
+        public void LoadData(WorldCollisionData data)
+        {
+            foreach (var engine in data.CollisionData)
+            {
+                foreach (var item in engine.Items)
+                {
+                    WorldTiles[engine.Name].Add(item);
+                }
+            }
+            
         }
         
     }

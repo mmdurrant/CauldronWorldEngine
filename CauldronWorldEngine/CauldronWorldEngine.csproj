@@ -116,11 +116,13 @@
     <Compile Include="SecurePasswordHasher.cs" />
     <Compile Include="StaticConversionMethods.cs" />
     <Compile Include="WorldEngine.cs" />
+    <Compile Include="World\WorldCollisionData.cs" />
     <Compile Include="World\WorldData.cs" />
-    <Compile Include="World\WorldObject.cs" />
     <Compile Include="Managers\WorldObjectManager.cs" />
     <Compile Include="World\SectionTile.cs" />
     <Compile Include="World\WorldLayer.cs" />
+    <Compile Include="World\WorldObject.cs" />
+    <Compile Include="World\WorldObjectData.cs" />
     <Compile Include="World\WorldSettings.cs" />
     <Compile Include="World\WorldTile.cs" />
   </ItemGroup>
